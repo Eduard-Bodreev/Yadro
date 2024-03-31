@@ -5,21 +5,28 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"unicode"
 
 	"github.com/joho/godotenv"
 )
 
 func normalizeInput(input string) string {
-	words := strings.Fields(input)
-	normalizedWords := make([]string, 0)
+	words := strings.FieldsFunc(input, func(r rune) bool {
+		return unicode.IsSpace(r) || unicode.IsPunct(r)
+	})
 
+	normalizedWords := []string{}
 	for _, word := range words {
 		if !isStopWord(word) {
 			normalizedWords = append(normalizedWords, strings.ToLower(word)+" ")
 		}
 	}
 
-	return strings.Join(normalizedWords, "")
+	res := strings.Join(normalizedWords, "")
+	if len(res) > 0 {
+		res = res[:len(res)-1]
+	}
+	return res
 }
 
 func init() {
@@ -29,20 +36,22 @@ func init() {
 }
 
 func main() {
-	stopWordsFilePath := flag.String("stopwords", "", "Path to the stopwords file")
-	input := flag.String("s", "", "String to normalize")
+	var stopWordsFilePath, input string
+
+	flag.StringVar(&stopWordsFilePath, "stopwords", "", "Path to the stopwords file")
+	flag.StringVar(&input, "s", "", "String to normalize")
 	flag.Parse()
 
-	if err := loadStopWords(*stopWordsFilePath); err != nil {
+	if err := loadStopWords(stopWordsFilePath); err != nil {
 		fmt.Printf("Failed to load stop words: %v\n", err)
 		return
 	}
 
-	if *input == "" {
+	if input == "" {
 		fmt.Println("No input provided")
 		return
 	}
 
-	normalized := normalizeInput(*input)
+	normalized := normalizeInput(input)
 	fmt.Println(normalized)
 }
