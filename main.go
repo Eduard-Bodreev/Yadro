@@ -15,7 +15,7 @@ func normalizeInput(input string) string {
 		return unicode.IsSpace(r) || unicode.IsPunct(r)
 	})
 
-	normalizedWords := []string{}
+	var normalizedWords []string
 	for _, word := range words {
 		if !isStopWord(word) {
 			normalizedWords = append(normalizedWords, strings.ToLower(word)+" ")
