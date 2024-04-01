@@ -10,23 +10,26 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func normalizeInput(input string) string {
+func normalizeInput(input string) []string {
 	words := strings.FieldsFunc(input, func(r rune) bool {
 		return unicode.IsSpace(r) || unicode.IsPunct(r)
 	})
 
 	var normalizedWords []string
 	for _, word := range words {
-		if !isStopWord(word) {
-			normalizedWords = append(normalizedWords, strings.ToLower(word)+" ")
+		cleanedWord := strings.Map(func(r rune) rune {
+			if unicode.IsPunct(r) {
+				return -1
+			}
+			return r
+		}, word)
+
+		if !isStopWord(cleanedWord) {
+			normalizedWords = append(normalizedWords, strings.ToLower(cleanedWord))
 		}
 	}
 
-	res := strings.Join(normalizedWords, "")
-	if len(res) > 0 {
-		res = res[:len(res)-1]
-	}
-	return res
+	return normalizedWords
 }
 
 func init() {
@@ -53,5 +56,5 @@ func main() {
 	}
 
 	normalized := normalizeInput(input)
-	fmt.Println(normalized)
+	fmt.Println(strings.Join(normalized, " "))
 }

@@ -13,30 +13,43 @@ func TestNormalizeInput(t *testing.T) {
 	testCases := []struct {
 		name     string
 		input    string
-		expected string
+		expected []string
 	}{
 		{
 			name:     "With stopwords",
 			input:    "this is a test of the normalization process",
-			expected: "test normalization process",
+			expected: []string{"test", "normalization", "process"},
 		},
 		{
 			name:     "Without stopwords",
 			input:    "short long trees",
-			expected: "short long trees",
+			expected: []string{"short", "long", "trees"},
 		},
 		{
 			name:     "Empty input",
 			input:    "",
-			expected: "",
+			expected: []string{},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := normalizeInput(tc.input); got != tc.expected {
-				t.Errorf("normalizeInput() = %q, want %q", got, tc.expected)
+			got := normalizeInput(tc.input)
+			if !compareSlices(got, tc.expected) {
+				t.Errorf("normalizeInput() = %s, want %s", got, tc.expected)
 			}
 		})
 	}
+}
+
+func compareSlices(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }

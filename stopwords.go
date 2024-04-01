@@ -38,6 +38,5 @@ func loadStopWords(filePath string) error {
 }
 
 func isStopWord(word string) bool {
-	_, exists := stopwords[strings.ToLower(word)]
-	return exists
+	return stopwords[strings.ToLower(word)]
 }
