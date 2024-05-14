@@ -1,0 +1,5 @@
+source_url: "https://xkcd.com"
+db_file: "./internal/database/database.json"
+index_file: "./internal/database/index.json"
+port: "8080"
+dsn: "file:/home/edik/Yadro/task5/mydatabase.db"
